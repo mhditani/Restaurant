@@ -13,7 +13,7 @@ namespace Restaurant.Entities.Domain
 
         public string Name { get; set; } = "";
 
-        public string Description { get; set; } = "";
+        public string? Description { get; set; } 
         [Precision(16, 2)]
 
         public decimal Price { get; set; }

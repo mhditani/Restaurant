@@ -9,7 +9,7 @@ namespace Restaurant.Services.IRepositories
 {
     public interface IMenuRepo
     {
-        Task<List<MenuItem>> GetAllAsync();
+        Task<List<MenuItem>> GetAllAsync( string? filteron,  string? filterQuery,  string? sortBy,  bool? isAscending,  int pageNumber = 1,  int pageSize = 1000);
 
         Task<MenuItem?> GetByIdAsync(int id);
 

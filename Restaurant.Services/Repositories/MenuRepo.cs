@@ -38,11 +38,42 @@ namespace Restaurant.Services.Repositories
             return existingMenu;
         }
 
-        public async Task<List<MenuItem>> GetAllAsync()
+        public async Task<List<MenuItem>> GetAllAsync(string? filteron, string? filterQuery, string? sortBy, bool? isAscending, int pageNumber = 1, int pageSize = 1000)
         {
-           return await db.MenuItems
-                .Include("OrderItems")
-                .ToListAsync();
+           var meneus =  db.MenuItems
+                .Include(o => o.OrderItems)
+                .AsQueryable();
+
+            // Filtering
+            if (String.IsNullOrWhiteSpace(filteron) == false && String.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filteron.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    meneus = meneus.Where(m => m.Name.Contains(filterQuery));
+                }
+            }
+
+            // Sorting
+            if (!string.IsNullOrWhiteSpace(sortBy))
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    meneus = isAscending == true
+                        ? meneus.OrderBy(m => m.Name)
+                        : meneus.OrderByDescending(m => m.Name);
+                }
+                else if (sortBy.Equals("Price", StringComparison.OrdinalIgnoreCase))
+                {
+                    meneus = isAscending == true
+                        ? meneus.OrderBy(m => m.Price)
+                        : meneus.OrderByDescending(m => m.Price);
+                }
+            }
+
+            // Pagination
+            var skipResults = (pageNumber - 1) * pageSize;
+
+            return await meneus.Skip(skipResults).Take(pageSize).ToListAsync();
         }
 
         public async Task<MenuItem?> GetByIdAsync(int id)

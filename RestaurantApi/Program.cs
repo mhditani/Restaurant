@@ -26,7 +26,7 @@ builder.Services.AddAutoMapper(typeof(MapperClass));
 
 // inject Repositories
 builder.Services.AddScoped<IMenuRepo, MenuRepo>();
-
+builder.Services.AddScoped<IOrderRepo, OrderRepo>();
 
 var app = builder.Build();
 

@@ -21,9 +21,9 @@ namespace RestaurantApi.Controllers
         }
 
         [HttpGet("GetAllMenu")]
-        public async Task<IActionResult> GetAllMenu()
+        public async Task<IActionResult> GetAllMenu([FromQuery] string? filteron, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
-            var menuItemDomain = await repo.GetAllAsync();
+            var menuItemDomain = await repo.GetAllAsync(filteron, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
             return Ok(mapper.Map<List<MenuItemDto>>(menuItemDomain));
         }
 
@@ -44,13 +44,17 @@ namespace RestaurantApi.Controllers
         [HttpPost("CreateMenu")]
         public async Task<IActionResult> CreateMenu(CreateMenuItemDto createMenuItemDto)
         {
-            var menuItemDomain =  mapper.Map<MenuItem>(createMenuItemDto);
+            if (ModelState.IsValid)
+            {
+                var menuItemDomain = mapper.Map<MenuItem>(createMenuItemDto);
 
-            menuItemDomain = await repo.CreateAsync(menuItemDomain);
+                menuItemDomain = await repo.CreateAsync(menuItemDomain);
 
-            var menuItemDto = mapper.Map<MenuItemDto>(menuItemDomain);
+                var menuItemDto = mapper.Map<MenuItemDto>(menuItemDomain);
 
-            return CreatedAtAction(nameof(GetById), new { menuItemDomain.Id }, menuItemDto);
+                return CreatedAtAction(nameof(GetById), new { menuItemDomain.Id }, menuItemDto);
+            }
+            return BadRequest(ModelState);
         }
 
         [HttpPut("{id:int}")]

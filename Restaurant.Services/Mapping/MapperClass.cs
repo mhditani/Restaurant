@@ -17,6 +17,13 @@ namespace Restaurant.Services.Mapping
             CreateMap<MenuItem, CreateMenuItemDto>().ReverseMap();
             CreateMap<MenuItem, UpdateMenuItemDto>().ReverseMap();
 
+
+            CreateMap<Order, OrderDto>().ReverseMap();
+            CreateMap<Order, CreateOrderDto>().ReverseMap();
+            CreateMap<Order,  UpdateOrderDto>().ReverseMap();
+
+            CreateMap<OrderItem, OrderItemDto>().ReverseMap();  
+            CreateMap<OrderItem, CreateOrderItemDto>().ReverseMap();
         }
     }
 }
