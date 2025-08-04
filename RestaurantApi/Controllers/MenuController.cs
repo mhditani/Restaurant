@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Entities.Domain;
@@ -21,6 +22,7 @@ namespace RestaurantApi.Controllers
         }
 
         [HttpGet("GetAllMenu")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllMenu([FromQuery] string? filteron, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
             var menuItemDomain = await repo.GetAllAsync(filteron, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
@@ -29,6 +31,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var menuItemDomain = await repo.GetByIdAsync(id);
@@ -42,6 +45,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpPost("CreateMenu")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateMenu(CreateMenuItemDto createMenuItemDto)
         {
             if (ModelState.IsValid)
@@ -58,6 +62,7 @@ namespace RestaurantApi.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateMenu([FromRoute] int id, [FromBody] UpdateMenuItemDto updateMenuItemDto)
         {
             var menuItemDomain = mapper.Map<MenuItem>(updateMenuItemDto);
@@ -75,6 +80,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteMenu([FromRoute] int id)
         {
             var existingMenu = await repo.DeleteAsync(id);

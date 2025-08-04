@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Entities.Domain;
@@ -22,6 +23,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllOrders(
          [FromQuery] string? status,
          [FromQuery] DateTime? startDate,
@@ -36,6 +38,7 @@ namespace RestaurantApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var orderDomain = await repo.GetByIdAsync(id);
@@ -49,6 +52,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto dto)
         {
             var orderDomain = mapper.Map<Order>(dto);
@@ -62,6 +66,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateStatus([FromRoute] int id, [FromBody] UpdateOrderDto dto)
         {
 
@@ -77,6 +82,7 @@ namespace RestaurantApi.Controllers
 
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var existingOrder = await repo.DeleteAsync(id);
